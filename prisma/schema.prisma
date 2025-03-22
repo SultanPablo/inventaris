@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model BarangHabisPakai {
+  id             Int     @id @default(autoincrement())
+  kode_barang    String?  @db.VarChar(255)
+  nama           String  @db.VarChar(255)
+  tahun_anggaran Int
+  satuan         String  @db.VarChar(50)
+  transaksi      TransaksiBarangHabisPakai[]
+}
+
+model Gedung {
+  id       Int       @id @default(autoincrement())
+  nama     String    @db.VarChar(255)
+  ruangan  Ruangan[]
+}
+
+model GeojsonData {
+  id         Int      @id @default(autoincrement())
+  nama_fitur String   @db.VarChar(255)
+  jenis      String   @db.VarChar(100)
+  geometry   String   @db.VarChar(500) // Gunakan String untuk GeoJSON format
+}
+
+model Golongan {
+  id         Int       @id @default(autoincrement())
+  nama       String    @db.VarChar(255)
+  kode_golongan String @db.VarChar(50)
+  kategoriId Int
+  kategori   Kategori  @relation(fields: [kategoriId], references: [id])
+  inventaris Inventaris[] // Menambahkan hubungan balik ke Inventaris
+}
+
+model Inventaris {
+  id                        Int     @id @default(autoincrement())
+  idRuangan                 Int
+  idGolongan                Int
+  namaInventaris            String  @db.VarChar(255)
+  tahunPerolehan            Int?
+  hargaPerolehan            Int?
+  bahanMerk                 String? @db.VarChar(255)
+  masaManfaat               Int?
+  umurAset                  Int?
+  nilaiResidu               Int?
+  persentaseGarisLurus      Decimal @db.Decimal(15,2)
+  nilaiYangDapatDisusutkan  Int?
+  bebanPenyusutanPerTahun   Int?
+  nilaiBukuAkhir            Int?
+  jumlah                    Int?
+  kondisi                   Kondisi
+  barcode                   String? @db.VarChar(255)
+
+  ruangan                   Ruangan   @relation(fields: [idRuangan], references: [id])
+  golongan                  Golongan  @relation(fields: [idGolongan], references: [id])
+}
+
+enum Kondisi {
+  baik
+  rusak
+}
+
+model Kategori {
+  id       Int        @id @default(autoincrement())
+  nama     String     @db.VarChar(255)
+  golongan Golongan[] 
+}
+
+model Ruangan {
+  id        Int      @id @default(autoincrement())
+  nama      String   @db.VarChar(255)
+  gedungId  Int?
+  gedung    Gedung?  @relation(fields: [gedungId], references: [id])
+  inventaris Inventaris[]
+}
+
+model TransaksiBarangHabisPakai {
+  id                 Int               @id @default(autoincrement())
+  barangId           Int
+  barang             BarangHabisPakai  @relation(fields: [barangId], references: [id])
+  uraian            String   @db.Text
+  jumlah_terima     Int                @default(0) // Amount received
+  jumlah_keluar     Int                @default(0) // Amount used or given out
+  jumlah_sisa       Int                @default(0) // Remaining stock
+  tanggal_transaksi DateTime @default(now())
+  tanda_bukti       String   @db.VarChar(255)
+}
