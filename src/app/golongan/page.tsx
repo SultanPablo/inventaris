@@ -6,12 +6,26 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent,DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
+type Golongan = {
+  id: number;
+  nama: string;
+  kode_golongan: string;
+  kategoriId: number;
+  kategori?: { id: number; nama: string };
+};
+
+type Kategori = {
+  id: number;
+  nama: string;
+};
+
 
 export default function GolonganPage() {
-  const [golongan, setGolongan] = useState([]);
-  const [filteredGolongan, setFilteredGolongan] = useState([]);
-  const [kategori, setKategori] = useState([]);
+  const [golongan, setGolongan] = useState<Golongan[]>([]);
+  const [filteredGolongan, setFilteredGolongan] = useState<Golongan[]>([]);
+  const [kategori, setKategori] = useState<Kategori[]>([]);
   const [nama, setNama] = useState("");
   const [kodeGolongan, setKodeGolongan] = useState("");
   const [kategoriId, setKategoriId] = useState<number | null>(null);
@@ -38,7 +52,7 @@ export default function GolonganPage() {
     if (id === 0 || id === null) {
       setFilteredGolongan(golongan); // Tampilkan semua golongan jika kategori adalah 0 (Semua Kategori)
     } else {
-      setFilteredGolongan(golongan.filter((item: any) => item.kategoriId === id));
+      setFilteredGolongan(golongan.filter((item) => item.kategoriId === id));
     }
   };
   
@@ -69,7 +83,22 @@ export default function GolonganPage() {
       alert(`Terjadi kesalahan: ${result.error}`);
     }
   };
-
+  const handleDelete = async () => {
+    if (!selectedId) return;
+  
+    const response = await fetch(`/api/golongan/${selectedId}`, {
+      method: "DELETE",
+    });
+  
+    if (response.ok) {
+      setGolongan((prev) => prev.filter((item) => item.id !== selectedId));
+      setFilteredGolongan((prev) => prev.filter((item) => item.id !== selectedId));
+      setOpenDelete(false);
+    } else {
+      alert("Gagal menghapus data");
+    }
+  };
+  
   return (
     <Card>
       <CardContent>
@@ -84,7 +113,7 @@ export default function GolonganPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="0">Semua Kategori</SelectItem>
-              {kategori.map((kat: any) => (
+              {kategori.map((kat: Kategori) => (
                 <SelectItem key={kat.id} value={kat.id.toString()}>{kat.nama}</SelectItem>
               ))}
             </SelectContent>
@@ -103,7 +132,7 @@ export default function GolonganPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredGolongan.map((item: any) => (
+            {filteredGolongan.map((item: Golongan) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{item.nama}</TableCell>
@@ -131,7 +160,7 @@ export default function GolonganPage() {
                 <SelectValue placeholder="Pilih Kategori" />
               </SelectTrigger>
               <SelectContent>
-                {kategori.map((kat: any) => (
+                {kategori.map((kat: Kategori) => (
                   <SelectItem key={kat.id} value={kat.id.toString()}>{kat.nama}</SelectItem>
                 ))}
               </SelectContent>
@@ -140,7 +169,18 @@ export default function GolonganPage() {
               <Button onClick={handleSave}>{selectedId ? "Update" : "Simpan"}</Button>
             </DialogFooter>
           </DialogContent>
-        </Dialog>
+        </Dialog><Dialog open={openDelete} onOpenChange={setOpenDelete}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Konfirmasi Hapus</DialogTitle>
+    </DialogHeader>
+    <p>Apakah Anda yakin ingin menghapus golongan ini?</p>
+    <DialogFooter>
+      <Button onClick={() => setOpenDelete(false)}>Batal</Button>
+      <Button variant="destructive" onClick={handleDelete}>Hapus</Button>
+    </DialogFooter>
+  </DialogContent>
+</Dialog>
       </CardContent>
     </Card>
   );

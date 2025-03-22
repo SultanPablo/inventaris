@@ -24,11 +24,14 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
   const body = await req.json();
 
   try {
+    // Perbarui transaksi dengan field yang sesuai, tanpa properti "jumlah" yang tidak ada
     const updatedTransaksi = await prisma.transaksiBarangHabisPakai.update({
       where: { id: Number(id) },
       data: {
         barangId: Number(body.barangId),
-        jumlah: Number(body.jumlah),
+        jumlah_terima: Number(body.jumlah_terima),
+        jumlah_keluar: Number(body.jumlah_keluar),
+        jumlah_sisa: Number(body.jumlah_terima) - Number(body.jumlah_keluar),
         uraian: body.uraian.trim(),
         tanda_bukti: body.tanda_bukti.trim(),
       },

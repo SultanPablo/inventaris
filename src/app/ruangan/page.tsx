@@ -4,11 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+
+// Definisikan tipe data
+interface Gedung {
+  id: number;
+  nama: string;
+}
+
+interface Ruangan {
+  id: number;
+  nama: string;
+  gedungId: number;
+  gedung?: Gedung; // Opsional jika data sudah di-join dengan gedung
+}
 
 export default function RuanganPage() {
-  const [ruangan, setRuangan] = useState<any[]>([]);
-  const [gedung, setGedung] = useState<any[]>([]);
+  const [ruangan, setRuangan] = useState<Ruangan[]>([]);
+  const [gedung, setGedung] = useState<Gedung[]>([]);
   const [nama, setNama] = useState("");
   const [gedungId, setGedungId] = useState<number | null>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
@@ -28,7 +41,7 @@ export default function RuanganPage() {
   const handleGedungFilter = async (gedungId: number) => {
     setGedungId(gedungId);
     const response = await fetch(`/api/ruangan?gedungId=${gedungId}`);
-    const data = await response.json();
+    const data: Ruangan[] = await response.json();
     setRuangan(data);
   };
 
@@ -84,11 +97,11 @@ export default function RuanganPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {ruangan.map((item: any) => (
+            {ruangan.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{item.nama}</TableCell>
-                <TableCell>{item.gedung?.nama}</TableCell>
+                <TableCell>{item.gedung?.nama || "Tidak Ada"}</TableCell>
                 <TableCell>
                   <Button size="sm" onClick={() => { setSelectedId(item.id); setNama(item.nama); setGedungId(item.gedungId); setOpen(true); }}>Edit</Button>
                   <Button size="sm" variant="destructive" onClick={() => { setSelectedId(item.id); setOpenDelete(true); }}>Hapus</Button>

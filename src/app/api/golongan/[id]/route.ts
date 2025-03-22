@@ -19,7 +19,7 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     });
 
     return NextResponse.json(golongan);
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Gagal mengupdate golongan" }, { status: 500 });
   }
 }
@@ -31,7 +31,7 @@ export async function DELETE(req: Request, { params }: { params: { id: string } 
     await prisma.golongan.delete({ where: { id: Number(id) } });
 
     return NextResponse.json({ message: "Golongan berhasil dihapus" });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: "Gagal menghapus golongan" }, { status: 500 });
   }
 }

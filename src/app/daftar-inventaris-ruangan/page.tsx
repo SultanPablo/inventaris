@@ -6,9 +6,25 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@/components/ui/table";
 import { exportToExcel, exportToPDF } from "@/utils/exportUtils";
 
+// Definisikan tipe data
+interface Inventaris {
+  id: number;
+  idRuangan: number;
+  namaInventaris: string;
+  bahanMerk: string;
+  jumlah: number;
+  tahunPerolehan: number;
+  kondisi: string;
+}
+
+interface Ruangan {
+  id: number;
+  nama: string;
+}
+
 export default function InventarisPage() {
-  const [inventaris, setInventaris] = useState([]);
-  const [ruangan, setRuangan] = useState([]);
+  const [inventaris, setInventaris] = useState<Inventaris[]>([]);
+  const [ruangan, setRuangan] = useState<Ruangan[]>([]);
   const [selectedRuangan, setSelectedRuangan] = useState("");
 
   useEffect(() => {
@@ -34,7 +50,7 @@ export default function InventarisPage() {
   }
 
   const filteredInventaris = selectedRuangan
-    ? inventaris.filter((item) => parseInt(item.idRuangan) === parseInt(selectedRuangan))
+    ? inventaris.filter((item) => item.idRuangan === parseInt(selectedRuangan))
     : inventaris;
 
   return (

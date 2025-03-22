@@ -7,8 +7,14 @@ import { Table, TableHead, TableHeader, TableRow, TableBody, TableCell } from "@
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
+// Definisikan tipe untuk kategori
+interface Kategori {
+  id: number;
+  nama: string;
+}
+
 export default function KategoriPage() {
-  const [kategori, setKategori] = useState([]);
+  const [kategori, setKategori] = useState<Kategori[]>([]);
   const [nama, setNama] = useState("");
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
@@ -66,7 +72,7 @@ export default function KategoriPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {kategori.map((item: any) => (
+            {kategori.map((item) => (
               <TableRow key={item.id}>
                 <TableCell>{item.id}</TableCell>
                 <TableCell>{item.nama}</TableCell>
