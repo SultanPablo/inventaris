@@ -1,18 +1,24 @@
-import { NextResponse } from "next/server";
+import { NextRequest,NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
+// GET: Ambil semua ruangan (bisa difilter berdasarkan gedungId)
 const prisma = new PrismaClient();
 
-// GET: Ambil semua ruangan (bisa difilter berdasarkan gedungId)
-export async function GET(req: Request) {
+export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url);
-    const gedungId = searchParams.get("gedungId");
+    const gedungId = req.nextUrl.searchParams.get("gedungId");
 
-    const ruangan = await prisma.ruangan.findMany({
-      where: gedungId ? { gedungId: parseInt(gedungId) } : undefined,
-      include: { gedung: true },
-    });
+    let ruangan;
+    if (gedungId) {
+      ruangan = await prisma.ruangan.findMany({
+        where: { gedungId: parseInt(gedungId) },
+        include: { gedung: true },
+      });
+    } else {
+      ruangan = await prisma.ruangan.findMany({
+        include: { gedung: true },
+      });
+    }
 
     return NextResponse.json(ruangan);
   } catch (error) {

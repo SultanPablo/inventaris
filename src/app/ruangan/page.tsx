@@ -31,12 +31,36 @@ export default function RuanganPage() {
   useEffect(() => {
     fetch("/api/gedung")
       .then((res) => res.json())
-      .then(setGedung);
-
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setGedung(data);
+        } else {
+          console.error("Data gedung bukan array:", data);
+          setGedung([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Gagal mengambil data gedung:", err);
+        setGedung([]);
+      });
+  
     fetch("/api/ruangan")
       .then((res) => res.json())
-      .then(setRuangan);
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setRuangan(data);
+        } else {
+          console.error("Data ruangan bukan array:", data);
+          setRuangan([]);
+        }
+      })
+      .catch((err) => {
+        console.error("Gagal mengambil data ruangan:", err);
+        setRuangan([]);
+      });
   }, []);
+  
+  
 
   const handleGedungFilter = async (gedungId: number) => {
     setGedungId(gedungId);
