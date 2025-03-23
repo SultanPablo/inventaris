@@ -246,6 +246,14 @@ export default function InventarisPage() {
                 <TableHead>Ruangan</TableHead>
                 <TableHead>Tahun Perolehan</TableHead>
                 <TableHead>Harga Perolehan</TableHead>
+                <TableHead>Bahan/Merk</TableHead>
+                <TableHead>Estimasi Masa Manfaat</TableHead>
+                <TableHead>Umur Aset</TableHead>
+                <TableHead>Nilai Residu</TableHead>
+                <TableHead>Persentase Garis Lurus</TableHead>
+                <TableHead>Nilai Yang Dapat Diusutkan</TableHead>
+                <TableHead>Beban Penyusutan/Tahun</TableHead>
+                <TableHead>Nilai Buku Akhir</TableHead>
                 <TableHead>Kondisi</TableHead>
                 <TableHead>QR Code</TableHead>
                 <TableHead>Aksi</TableHead>
@@ -261,6 +269,14 @@ export default function InventarisPage() {
                   </TableCell>
                   <TableCell>{item.tahunPerolehan}</TableCell>
                   <TableCell>{formatRupiah(item.hargaPerolehan)}</TableCell>
+                  <TableCell>{item.bahanMerk}</TableCell>
+                  <TableCell>{item.masaManfaat}</TableCell>
+                  <TableCell>{item.umurAset}</TableCell>
+                  <TableCell>{item.nilaiResidu}</TableCell>
+                  <TableCell>{item.persentaseGarisLurus}</TableCell>
+                  <TableCell>{item.nilaiYangDapatDisusutkan}</TableCell>
+                  <TableCell>{item.bebanPenyusutanPerTahun}</TableCell>
+                  <TableCell>{item.nilaiBukuAkhir}</TableCell>
                   <TableCell>{item.kondisi}</TableCell>
                   <TableCell>
                     <Button
