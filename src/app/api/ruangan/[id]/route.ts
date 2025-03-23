@@ -4,16 +4,18 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 // GET: Ambil ruangan berdasarkan ID
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await context.params; // Await context.params
     const ruangan = await prisma.ruangan.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: Number(id) },
       include: { gedung: true },
     });
+
     if (!ruangan) {
       return NextResponse.json({ error: "Ruangan tidak ditemukan" }, { status: 404 });
     }
+    
     return NextResponse.json(ruangan);
   } catch (error) {
     console.error("Error saat mengambil ruangan:", error);
@@ -22,9 +24,9 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 }
 
 // PUT: Update ruangan berdasarkan ID
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
     const body = await req.json();
 
     if (!body.nama || !body.gedungId) {
@@ -32,10 +34,10 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const updatedRuangan = await prisma.ruangan.update({
-      where: { id: parseInt(id) },
+      where: { id: Number(id) },
       data: {
         nama: body.nama.trim(),
-        gedungId: parseInt(body.gedungId),
+        gedungId: Number(body.gedungId),
       },
     });
 
@@ -47,12 +49,14 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 }
 
 // DELETE: Hapus ruangan berdasarkan ID
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
-    const { id } = params;
+    const { id } = await context.params;
+
     await prisma.ruangan.delete({
-      where: { id: parseInt(id) },
+      where: { id: Number(id) },
     });
+
     return NextResponse.json({ message: "Ruangan berhasil dihapus" });
   } catch (error) {
     console.error("Error saat hapus ruangan:", error);
